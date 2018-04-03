@@ -38,7 +38,7 @@ class Session():
         json_resp = json.loads(resp.read())
         self.token = json_resp['token']
 
-    def get_all_members(self):
+    def get_all_members(self, filename=None):
 
         self.check_token()
 
@@ -58,6 +58,10 @@ class Session():
             print(resp.status, resp.reason)
         elif verbose:
             print('Members successfully fetched!')
+
+        if filename:
+            with open(filename, 'w') as out_file:
+                out_file.write(resp.read())
 
         return json.loads(resp.read())
 

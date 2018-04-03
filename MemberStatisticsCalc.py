@@ -63,6 +63,26 @@ def get_gender_dist(members):
 
     return {'male': nbr_male, 'female': nbr_female, 'unknown': nbr_unknown}
 
+def get_membership_dist(members):
+
+    nbr_student = 0
+    nbr_working = 0
+    nbr_senior = 0
+    nbr_unknown = 0
+
+    for member in members:
+        if member['member_type'] == 'student':
+            nbr_student += 1
+        elif member['member_type'] == 'working':
+            nbr_working += 1
+        elif member['member_type'] == 'senior':
+            nbr_senior += 1
+        else:
+            nbr_unknown += 1
+
+    return {'student': nbr_student, 'working': nbr_working,
+            'senior': nbr_senior, 'unknown': nbr_unknown}
+
 ses = Session()
 
 ses.login()
@@ -75,17 +95,38 @@ genders = get_gender_dist(curr_members)
 
 males = genders['male']
 females = genders['female']
-unknowns = genders['unknown']
+unknown_gender = genders['unknown']
 
+member_types = get_membership_dist(curr_members)
+
+students = member_types['student']
+working = member_types['working']
+seniors = member_types['senior']
+unknown_types = member_types['unknown']
+
+print('\n# General Statistics')
 print('Number of members in register: {}'.format(nbr_members))
 print('Number of current members: {}'.format(nbr_curr_members))
 
-print('# Current Gender distrobution')
-print('Male: {}, {:.1f}%'.format(males, males/nbr_curr_members*100))
-print('Female: {}, {:.1f}%'.format(females, females/nbr_curr_members*100))
-print('Unknown: {},{:.1f}%'.format(unknowns, unknowns/nbr_curr_members*100))
+print('\n# Current Gender Distribution')
+print('Male: {:<4}, {:>5.1f}%'
+      .format(males, males/nbr_curr_members*100))
+print('Female: {:<4}, {:>5.1f}%'
+      .format(females, females/nbr_curr_members*100))
+print('Unknown: {:<4},{:>5.1f}%'
+      .format(unknown_gender, unknown_gender/nbr_curr_members*100))
 
-print('# Membership history')
+print('\n# Current Membership Distribution')
+print('Student: {:<4}, {:>5.1f}%'
+      .format(students, students/nbr_curr_members*100))
+print('Working: {:<4}, {:>5.1f}%'
+      .format(working, working/nbr_curr_members*100))
+print('Senior: {:<4},{:>5.1f}%'
+      .format(seniors, seniors/nbr_curr_members*100))
+print('Unknown: {:<4},{:>5.1f}%'
+      .format(unknown_types, unknown_types/nbr_curr_members*100))
+
+print('\n# Membership history')
 for year in range(2010,2019):
     print('Members {}: {}'
           .format(year, members_at_date(all_members, datetime(year, 12, 31))))
