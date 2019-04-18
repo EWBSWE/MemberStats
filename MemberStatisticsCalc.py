@@ -16,7 +16,7 @@ def members_at_date(members, date=datetime.today(), extract=False):
         expiration_date = datetime.strptime(member['expiration_date'], 
                                           "%Y-%m-%dT%H:%M:%S.%fZ")
 
-        if date < expiration_date and date > creation_date:
+        if date < expiration_date and date >= creation_date:
             nbr_members += 1
             if extract:
                 mbrs.append(member)
@@ -87,7 +87,7 @@ ses = Session()
 
 ses.login()
 all_members = ses.get_all_members()
-nbr_curr_members, curr_members = members_at_date(all_members, datetime(2017,12,31), extract=True)
+nbr_curr_members, curr_members = members_at_date(all_members, datetime.today(), extract=True)
 
 nbr_members = len(all_members)
 
@@ -127,11 +127,15 @@ print('Unknown: {:<4},{:>5.1f}%'
       .format(unknown_types, unknown_types/nbr_curr_members*100))
 
 print('\n# Membership history')
-for year in range(2010,2019):
+for year in range(2010,datetime.today().year + 1):
     print('Members {}: {}'
           .format(year, members_at_date(all_members, datetime(year, 12, 31))))
 
 nbr_new, new_members = get_new_members(all_members, datetime(2017,1,1), extract=True)
 
+print('\n# Changes in members')
+# This date shouldn't be hardcoded
 print('New members this year: {}'
-      .format(get_new_members(all_members, datetime(2018,1,1))))
+      .format(get_new_members(all_members, datetime(datetime.today().year,1,1))))
+
+
