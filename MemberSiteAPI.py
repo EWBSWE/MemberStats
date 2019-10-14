@@ -17,7 +17,7 @@ class Session():
         self.verbose = verbose
 
 
-    def login(self):
+    def manual_login(self):
         usr_email = input('Email: ')
         usr_pwd = getpass.getpass()
 
@@ -50,6 +50,12 @@ class Session():
         if self.save_token_to_file:
             with open('.token','w') as token_file:
                 token_file.write(self.token)
+
+    def login(self):
+        print("Checking for token...")
+        if not self.check_for_token():
+            print("Reverting to manual login")
+            self.manual_login()
 
     def get_all_members(self, filename=None):
 
@@ -110,18 +116,21 @@ class Session():
                     self.token = token_file.read()
                     # Test token to see if it is still valid
                     if self.try_token():
-                        if func:
-                            func(args)
+                        #if func:
+                        #    func(args)
+                        return True
                     else:
                         print('Token has expired or is no longer valid, please login again!')
-                        self.login()
-                        if func:
-                            func(args)
+                        #self.login()
+                        #if func:
+                        #    func(args)
+                        return False
             else:
                 print('No token found, please login before using API!')
-                self.login()
-                if func:
-                    func(args)
+                return False
+                #self.login()
+                #if func:
+                #    func(args)
 
     def try_token(self):
         success = False
@@ -143,9 +152,9 @@ class Session():
         else:
             if self.verbose:
                 print('Token verification success!')
-                print('Server response:')
-                print(resp.status, resp.reason)
-                print(resp.read())
+                #print('Server response:')
+                #print(resp.status, resp.reason)
+                #print(resp.read())
             success = True
 
         return success
