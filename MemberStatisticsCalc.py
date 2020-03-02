@@ -141,6 +141,12 @@ if __name__ == "__main__":
 
 
     # Quarterly breakdown
+    print('\n# Quarterly breakdown for {}'.format(date.today().year - 1))
+    print('Q1: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year - 1,  3, 31))))
+    print('Q2: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year - 1,  6, 30))))
+    print('Q3: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year - 1,  9, 30))))
+    print('Q4: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year - 1, 12, 31))))
+
     print('\n# Quarterly breakdown for {}'.format(date.today().year))
     print('Q1: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year,  3, 31))))
     print('Q2: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year,  6, 30))))
