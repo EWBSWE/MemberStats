@@ -3,6 +3,7 @@
 from datetime import datetime, date, timedelta
 from MemberSiteAPI import Session
 
+
 def members_at_date(members, date=datetime.today(), extract=False):
     
     nbr_members = 0
@@ -24,6 +25,7 @@ def members_at_date(members, date=datetime.today(), extract=False):
         return (nbr_members, mbrs)
     else:
         return nbr_members
+
 
 def get_new_members(members, start_date, end_date=datetime.today(), extract=False):
     nbr_new_members = 0
@@ -47,6 +49,7 @@ def get_new_members(members, start_date, end_date=datetime.today(), extract=Fals
     else:
         return nbr_new_members
 
+
 def get_gender_dist(members):
 
     nbr_male = 0
@@ -63,16 +66,17 @@ def get_gender_dist(members):
 
     return {'male': nbr_male, 'female': nbr_female, 'unknown': nbr_unknown}
 
+
 def get_membership_dist(members):
 
-    nbr_student = 0
+    nbr_students = 0
     nbr_working = 0
     nbr_senior = 0
     nbr_unknown = 0
 
     for member in members:
         if member['member_type'] == 'student':
-            nbr_student += 1
+            nbr_students += 1
         elif member['member_type'] == 'working':
             nbr_working += 1
         elif member['member_type'] == 'senior':
@@ -80,8 +84,23 @@ def get_membership_dist(members):
         else:
             nbr_unknown += 1
 
-    return {'student': nbr_student, 'working': nbr_working,
+    return {'student': nbr_students, 'working': nbr_working,
             'senior': nbr_senior, 'unknown': nbr_unknown}
+
+
+# Get all new members that signed up a given year
+def get_new_members_during_year(members, year, extract=True):
+    return get_new_members(members, datetime(year, 1, 1), datetime(year, 12, 31), extract=True)
+
+
+def get_members_local_group(members, local_group):
+    in_local_group = []
+    for member in members:
+        if local_group.lower() in member['location'].lower():
+            in_local_group.append(member)
+
+    return in_local_group
+
 
 if __name__ == "__main__":
     ses = Session(verbose=True)
@@ -136,6 +155,8 @@ if __name__ == "__main__":
 
     print('\n# Changes in members')
     # This date shouldn't be hardcoded
+    print('New members last year: {}'
+          .format(get_new_members(all_members, datetime(datetime.today().year - 1,1,1))))
     print('New members this year: {}'
           .format(get_new_members(all_members, datetime(datetime.today().year,1,1))))
 
@@ -152,3 +173,22 @@ if __name__ == "__main__":
     print('Q2: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year,  6, 30))))
     print('Q3: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year,  9, 30))))
     print('Q4: {:>4}'.format(members_at_date(all_members, datetime(datetime.today().year, 12, 31))))
+
+    # Breakdown on local group level from last year
+    year = 2019
+    print('\n# Local group breakdown for {}, new members'.format(year))
+    locations = ['luleå', 'uppsala', 
+                 'karlstad', 'stockholm', 
+                 'göteborg', 'malmö', 
+                 'lund', 'linköping',
+                 'helsingborg', 'örebro']
+
+    new_mems_last_year, new_members_last_year = get_new_members_during_year(all_members, year, extract=True)
+    for location in locations:
+        local_members = get_members_local_group(new_members_last_year, location)
+        mem_dist = get_membership_dist(local_members)
+        print('\n## {}'.format(location.capitalize()))
+        print('Students: {:>4}, {:5.1f}%'.format(mem_dist['student'], mem_dist['student']/new_mems_last_year*100))
+        print('Working:  {:>4}, {:5.1f}%'.format(mem_dist['working'], mem_dist['working']/new_mems_last_year*100))
+        print('Seniors:  {:>4}, {:5.1f}%'.format(mem_dist['senior'],  mem_dist['senior']/new_mems_last_year*100))
+        print('Unknowns: {:>4}, {:5.1f}%'.format(mem_dist['unknown'], mem_dist['unknown']/new_mems_last_year*100))
