@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from datetime import datetime, date, timedelta
-from MemberSiteAPI import Session
+from MemberStats.MemberSiteAPI import Session
 
 
 def members_at_date(members, date=datetime.today(), extract=False):

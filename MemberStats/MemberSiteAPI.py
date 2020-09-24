@@ -7,6 +7,13 @@ import json
 from pprint import pprint
 from datetime import datetime
 
+class EWBServerException(Exception):
+    
+    def __init__(self, message):
+        self.message = message
+
+
+
 # Creates a session with the server. The session is then used to communicate with the server.
 class Session():
 
@@ -26,7 +33,6 @@ class Session():
 
 
     def login_with_credentials(self, cred_json):
-
         data =  bytes(cred_json, 'utf-8')
 
         headers = {"Accept": "application/json, text/plain, */*",
@@ -42,6 +48,7 @@ class Session():
             print('Could not connect! Login failed!')
             print('Server response:')
             print(resp.status, resp.reason)
+            raise EWBServerException(f"ERROR: Server responded with status code '{resp.status}' and reason'{resp.reason}'")
         elif self.verbose:
             print('Login successful!')
         
