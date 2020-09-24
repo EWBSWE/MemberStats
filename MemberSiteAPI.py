@@ -21,8 +21,13 @@ class Session():
         usr_email = input('Email: ')
         usr_pwd = getpass.getpass()
 
-        data_str = '{{"email":"{}","password":"{}"}}'.format(usr_email, usr_pwd)
-        data =  bytes(data_str, 'utf-8')
+        cred_json = '{{"email":"{}","password":"{}"}}'.format(usr_email, usr_pwd)
+        self.login_with_credentials(cred_json)
+
+
+    def login_with_credentials(self, cred_json):
+
+        data =  bytes(cred_json, 'utf-8')
 
         headers = {"Accept": "application/json, text/plain, */*",
                 "Content-Length": str(len(data)),
@@ -33,13 +38,13 @@ class Session():
 
         resp = conn.getresponse()
 
-        if resp.status is not 200:
+        if resp.status != 200:
             print('Could not connect! Login failed!')
             print('Server response:')
             print(resp.status, resp.reason)
         elif self.verbose:
             print('Login successful!')
-
+        
         json_resp = json.loads(resp.read())
         self.token = json_resp['token']
 
@@ -51,11 +56,13 @@ class Session():
             with open('.token','w') as token_file:
                 token_file.write(self.token)
 
+
     def login(self):
         print("Checking for token...")
         if not self.check_for_token():
             print("Reverting to manual login")
             self.manual_login()
+
 
     def get_all_members(self, filename=None):
 
@@ -71,7 +78,7 @@ class Session():
 
         resp = conn.getresponse()
 
-        if resp.status is not 200:
+        if resp.status != 200:
             print('Could not get members!')
             print('Server response:')
             print(resp.status, resp.reason)
@@ -145,7 +152,7 @@ class Session():
 
         resp = conn.getresponse()
 
-        if resp.status is not 200:
+        if resp.status != 200:
             print('Token verification failed!')
             print('Server response:')
             print(resp.status, resp.reason)
