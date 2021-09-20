@@ -7,6 +7,9 @@ import json
 from pprint import pprint
 from datetime import datetime
 
+
+EWB_MEMBER_BASE_URL = 'member.ewb-swe.org'
+
 class EWBServerException(Exception):
     
     def __init__(self, message):
@@ -39,7 +42,7 @@ class Session():
                 "Content-Length": str(len(data)),
                 "Content-Type": "application/json;charset=UTF-8"}
 
-        conn = http.client.HTTPSConnection("blimedlem.ingenjorerutangranser.se")
+        conn = http.client.HTTPSConnection(EWB_MEMBER_BASE_URL)
         conn.request('POST', '/auth/local', body=data, headers=headers)
 
         resp = conn.getresponse()
@@ -80,7 +83,7 @@ class Session():
                    "Authorization": "Bearer " + self.token,
                    "Cookie": 'token=%22' + self.token + '%22'}
 
-        conn = http.client.HTTPSConnection("blimedlem.ingenjorerutangranser.se")
+        conn = http.client.HTTPSConnection(EWB_MEMBER_BASE_URL)
         conn.request('GET', '/api/members', headers=headers)
 
         resp = conn.getresponse()
@@ -154,7 +157,7 @@ class Session():
                    "Authorization": "Bearer " + self.token,
                    "Cookie": 'token=%22' + self.token + '%22'}
 
-        conn = http.client.HTTPSConnection("blimedlem.ingenjorerutangranser.se")
+        conn = http.client.HTTPSConnection(EWB_MEMBER_BASE_URL)
         conn.request('HEAD', '/api/members', headers=headers)
 
         resp = conn.getresponse()
